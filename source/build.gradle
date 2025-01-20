@@ -1,0 +1,47 @@
+plugins {
+    id "java-library"
+    id "org.openapi.generator" version "7.10.0"
+}
+
+group = "ch.puzzle"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets.main.java.srcDirs += ["${layout.buildDirectory.asFile.get()}/generate-resources/main/src/main/java"]
+
+dependencies {
+    implementation "jakarta.annotation:jakarta.annotation-api:3.0.0"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.18.2"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.18.2"
+    api project(":schema")
+    testImplementation platform("org.junit:junit-bom:5.10.0")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+openApiGenerate{
+    inputSpec.set("$projectDir/openapi/api-docs.json")
+    generatorName.set("java")
+    globalProperties.set([
+            apis: "false",
+            models: "VbvData,UniqueID",
+    ])
+    modelNameMappings.set([
+            UniqueID:"UniqueId"
+    ])
+    configOptions.set([
+            library: "native",
+            serializationLibrary: "jackson",
+            openApiNullable: "false",
+            modelPackage: "ch.puzzle.kafka.connector.traffic.model",
+            useJakartaEe: "true",
+            supportUrlQuery: "false"
+    ])
+}
+compileJava.dependsOn tasks.openApiGenerate

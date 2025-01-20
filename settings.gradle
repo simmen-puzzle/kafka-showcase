@@ -1,0 +1,9 @@
+rootProject.name = 'kafka'
+include 'schema'
+include 'simple'
+include 'connector'
+include 'untitled'
+include 'source'
+include 'standalone'
+include 'stream'
+

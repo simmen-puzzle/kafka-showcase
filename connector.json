@@ -1,0 +1,7 @@
+{
+  "name": "traffic-connector",
+  "config": {
+    "connector.class": "ch.puzzle.kafka.traffic.connector.TrafficSourceConnector",
+    "tasks.max": "1"
+  }
+}

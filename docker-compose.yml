@@ -1,0 +1,98 @@
+---
+version: '3'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    container_name: sn-zookeeper
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+      - 29092:29092
+    container_name: sn-kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    healthcheck:
+        test: echo srvr | nc kafka 9092 || exit 1
+        interval: 5s
+        retries: 10
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:latest
+    depends_on:
+      - zookeeper
+      - kafka
+    ports: 
+      - 8081:8081
+    container_name: sn-schema-registry
+    environment: 
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:29092'
+
+  traffic-standalone:
+    image: traffic-standalone:latest
+    network_mode: 'host'
+    container_name: traffic-standalone
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  traffic-dispatch:
+    image: traffic-stream:latest
+    network_mode: 'host'
+    container_name: traffic-dispatch
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: 'java -cp /home/streams.jar ch.puzzle.kafka.traffic.stream.DispatchStream'
+
+  traffic-count:
+    image: traffic-stream:latest
+    network_mode: 'host'
+    container_name: traffic-count
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: 'java -cp /home/streams.jar ch.puzzle.kafka.traffic.stream.PwCountLastMinuteStream'
+
+
+#  traffic-connector:
+#    image: traffic-connector:latest
+#    depends_on:
+#      kafka:
+#        condition: service_healthy
+#    ports:
+#      - 8083:8083
+#      - 8888:8888
+#    container_name: traffic-connector
+#    environment:
+#       CONNECT_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:29092'
+#       CONNECT_GROUP_ID: 'traffic-c'
+#       CONNECT_CONFIG_STORAGE_TOPIC: 'traffic-c-config'
+#       CONNECT_OFFSET_STORAGE_TOPIC: 'traffic-c-offsets'
+#       CONNECT_STATUS_STORAGE_TOPIC: 'traffic-c-status'
+#       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: '1'
+#       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '1'
+#       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: '1'
+#       CONNECT_KEY_CONVERTER: 'org.apache.kafka.connect.storage.StringConverter'
+#       CONNECT_VALUE_CONVERTER: 'io.confluent.connect.avro.AvroConverter'
+#       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://localhost:8081'
+#       CONNECT_REST_ADVERTISED_HOST_NAME: 'traffic-connector'
+#       CONNECT_PLUGIN_PATH: '/usr/share/java'
+#       CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
+#       KAFKA_DEBUG: "false"
+#       JAVA_DEBUG_PORT: "*:8888"

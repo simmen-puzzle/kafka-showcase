@@ -1,0 +1,6 @@
+plugins {
+
+}
+
+group = 'ch.puzzle'
+version = '1.0-SNAPSHOT'

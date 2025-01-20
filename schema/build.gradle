@@ -1,0 +1,20 @@
+plugins {
+    id 'java-library'
+    id "com.github.davidmc24.gradle.plugin.avro" version '1.9.1'
+}
+
+group = 'ch.puzzle'
+version = '1.0-SNAPSHOT'
+
+sourceSets.main.resources.srcDirs += ["src/main/avro"]
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api "org.apache.avro:avro:1.12.0"
+}
+
+
+compileJava.dependsOn tasks.generateAvroJava
