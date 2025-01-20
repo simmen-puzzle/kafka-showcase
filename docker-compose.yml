@@ -43,13 +43,13 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:29092'
 
-  traffic-standalone:
-    image: traffic-standalone:latest
-    network_mode: 'host'
-    container_name: traffic-standalone
-    depends_on:
-      kafka:
-        condition: service_healthy
+#  traffic-standalone:
+#    image: traffic-standalone:latest
+#    network_mode: 'host'
+#    container_name: traffic-standalone
+#    depends_on:
+#      kafka:
+#        condition: service_healthy
 
   traffic-dispatch:
     image: traffic-stream:latest
@@ -70,29 +70,29 @@ services:
     command: 'java -cp /home/streams.jar ch.puzzle.kafka.traffic.stream.PwCountLastMinuteStream'
 
 
-#  traffic-connector:
-#    image: traffic-connector:latest
-#    depends_on:
-#      kafka:
-#        condition: service_healthy
-#    ports:
-#      - 8083:8083
-#      - 8888:8888
-#    container_name: traffic-connector
-#    environment:
-#       CONNECT_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:29092'
-#       CONNECT_GROUP_ID: 'traffic-c'
-#       CONNECT_CONFIG_STORAGE_TOPIC: 'traffic-c-config'
-#       CONNECT_OFFSET_STORAGE_TOPIC: 'traffic-c-offsets'
-#       CONNECT_STATUS_STORAGE_TOPIC: 'traffic-c-status'
-#       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: '1'
-#       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '1'
-#       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: '1'
-#       CONNECT_KEY_CONVERTER: 'org.apache.kafka.connect.storage.StringConverter'
-#       CONNECT_VALUE_CONVERTER: 'io.confluent.connect.avro.AvroConverter'
-#       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://localhost:8081'
-#       CONNECT_REST_ADVERTISED_HOST_NAME: 'traffic-connector'
-#       CONNECT_PLUGIN_PATH: '/usr/share/java'
-#       CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
-#       KAFKA_DEBUG: "false"
-#       JAVA_DEBUG_PORT: "*:8888"
+  traffic-connector:
+    image: traffic-connector:latest
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - 8083:8083
+      - 8888:8888
+    container_name: traffic-connector
+    environment:
+       CONNECT_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:29092'
+       CONNECT_GROUP_ID: 'traffic-c'
+       CONNECT_CONFIG_STORAGE_TOPIC: 'traffic-c-config'
+       CONNECT_OFFSET_STORAGE_TOPIC: 'traffic-c-offsets'
+       CONNECT_STATUS_STORAGE_TOPIC: 'traffic-c-status'
+       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: '1'
+       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '1'
+       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: '1'
+       CONNECT_KEY_CONVERTER: 'org.apache.kafka.connect.storage.StringConverter'
+       CONNECT_VALUE_CONVERTER: 'io.confluent.connect.avro.AvroConverter'
+       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+       CONNECT_REST_ADVERTISED_HOST_NAME: 'traffic-connector'
+       CONNECT_PLUGIN_PATH: '/usr/share/java'
+       CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
+       KAFKA_DEBUG: "false"
+       JAVA_DEBUG_PORT: "*:8888"

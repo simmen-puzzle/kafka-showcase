@@ -26,14 +26,16 @@ public class TrafficSourceTask extends SourceTask {
 
     @Override
     public List<SourceRecord> poll() throws InterruptedException {
-        return source.getVbvData().stream().map(v -> new SourceRecord(
+        return source.getVbvData().stream()
+                .map(v-> avroData.toConnectData(Vbv.SCHEMA$, v))
+                .map(v -> new SourceRecord(
                         Collections.singletonMap("source", "M3621")
                         , Collections.singletonMap("offset", 0)
-                        , "M3621"
+                        , "traffic"
                         , Schema.STRING_SCHEMA
                         , "M3621"
-                        , avroData.toConnectSchema(Vbv.getClassSchema())
-                        , v))
+                        , v.schema()
+                        , v.value()))
                 .toList();
     }
 
