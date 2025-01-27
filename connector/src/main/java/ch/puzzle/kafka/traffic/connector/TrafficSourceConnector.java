@@ -9,6 +9,7 @@ import org.apache.kafka.connect.source.SourceConnector;
 public class TrafficSourceConnector  extends SourceConnector {
 
 
+    public static final String COLLECTOR_ID = "collectorId";
     private Map<String, String> props;
 
     @Override
@@ -33,7 +34,10 @@ public class TrafficSourceConnector  extends SourceConnector {
 
     @Override
     public ConfigDef config() {
-        return new ConfigDef();
+        return new ConfigDef().define(COLLECTOR_ID,
+                ConfigDef.Type.STRING,
+                ConfigDef.Importance.HIGH,
+                "Collector ID of the vehicle counter to import objects from");
     }
 
     @Override

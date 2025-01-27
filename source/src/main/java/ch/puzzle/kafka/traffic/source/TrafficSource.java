@@ -21,12 +21,17 @@ public class TrafficSource {
     private static final Logger LOG = LoggerFactory.getLogger(TrafficSource.class);
 
     private final Queue<Vbv> vbvQueue = new ArrayDeque<>();
+    private final String collectorId;
     private boolean alive = true;
+
+    public TrafficSource(String collectorId) {
+        this.collectorId = collectorId;
+    }
 
     public void run() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            URL trafficUrl = new URL("https://vdp.zh.ch/pws/public-service/readOnlineVbvData/M3621?sampleOnly=false");
+            URL trafficUrl = new URL("https://vdp.zh.ch/pws/public-service/readOnlineVbvData/"+collectorId+"?sampleOnly=false");
             URLConnection trafficConnection = trafficUrl.openConnection();
             trafficConnection.setRequestProperty("accept", "application/stream+json");
             trafficConnection.connect();

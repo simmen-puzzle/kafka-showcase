@@ -1,0 +1,8 @@
+{
+  "name": "traffic-connector-M3621",
+  "config": {
+    "connector.class": "ch.puzzle.kafka.traffic.connector.TrafficSourceConnector",
+    "tasks.max": "1",
+    "collectorId": "M3621"
+  }
+}

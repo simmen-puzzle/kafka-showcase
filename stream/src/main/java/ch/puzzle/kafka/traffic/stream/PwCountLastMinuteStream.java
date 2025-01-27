@@ -27,7 +27,7 @@ public class PwCountLastMinuteStream {
                 .count()
                 .suppress(untilWindowCloses(unbounded()))
                 .toStream()
-                .map((k, v)-> KeyValue.pair(k.key(),format("counted %d objects in window %s",v,k.window())));
+                .map((k, v)-> KeyValue.pair(k.key(),format("counted %d objects in window %s for collector %s",v,k.window(),k.key())));
         countStream.to("traffic-SWISS10_PW-minute-count", Produced.with(Serdes.String(), Serdes.String()));
         runner.run(builder);
     }

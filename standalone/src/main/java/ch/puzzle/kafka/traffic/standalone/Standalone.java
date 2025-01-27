@@ -22,7 +22,7 @@ public class Standalone {
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         properties.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
 
-        final TrafficSource source = new TrafficSource();
+        final TrafficSource source = new TrafficSource("M3621");
         Thread thread = new Thread(source::run);
         thread.start();
         try(Producer<String, Vbv> producer = new KafkaProducer<>(properties)){

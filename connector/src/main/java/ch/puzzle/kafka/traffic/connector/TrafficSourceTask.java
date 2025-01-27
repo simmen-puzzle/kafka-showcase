@@ -1,5 +1,7 @@
 package ch.puzzle.kafka.traffic.connector;
 
+import static ch.puzzle.kafka.traffic.connector.TrafficSourceConnector.COLLECTOR_ID;
+
 import avro.Vbv;
 import ch.puzzle.kafka.traffic.source.TrafficSource;
 import io.confluent.connect.avro.AvroData;
@@ -12,13 +14,16 @@ import org.apache.kafka.connect.source.SourceTask;
 
 public class TrafficSourceTask extends SourceTask {
 
-    private final TrafficSource source = new TrafficSource();
+    private TrafficSource source;
     private final AvroData avroData = new AvroData(1);
     private Map<String, String> props;
+    private String collectorId;
 
     @Override
     public void start(Map<String, String> map) {
         this.props = map;
+        collectorId = map.get(COLLECTOR_ID);
+        this.source = new TrafficSource(collectorId);
         Thread thread = new Thread(source::run);
         thread.start();
 
@@ -29,11 +34,11 @@ public class TrafficSourceTask extends SourceTask {
         return source.getVbvData().stream()
                 .map(v-> avroData.toConnectData(Vbv.SCHEMA$, v))
                 .map(v -> new SourceRecord(
-                        Collections.singletonMap("source", "M3621")
+                        Collections.singletonMap("source", collectorId)
                         , Collections.singletonMap("offset", 0)
                         , "traffic"
                         , Schema.STRING_SCHEMA
-                        , "M3621"
+                        , collectorId
                         , v.schema()
                         , v.value()))
                 .toList();

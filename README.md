@@ -45,12 +45,13 @@ ch.puzzle.kafka.traffic.connector.TrafficSourceConnector
 ```
 now you can start the connector with the following statement
 ```
-curl -X POST -H "Content-Type:application/json" -d @connector.json http://localhost:8083/connectors
+curl -X POST -H "Content-Type:application/json" -d @connector-M3621.json http://localhost:8083/connectors
+curl -X POST -H "Content-Type:application/json" -d @connector-M1118.json http://localhost:8083/connectors
 ```
 zf you have the kafka binaries on your system you should be able to connect to all the topics
 including `traffic` with
 ```
-kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic traffic-SWISS10_PW-minute-count
+kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic traffic
 ```
 and check if the connector is producing record
 
@@ -66,7 +67,8 @@ kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic traffic-SWIS
 ```
 and after some time see something like this
 ```
-counted 8 objects in window Window{startMs=1737370320000, endMs=1737370380000}
+counted 1 objects in window Window{startMs=1737981300000, endMs=1737981360000} for collector M1118
+counted 12 objects in window Window{startMs=1737981300000, endMs=1737981360000} for collector M3621
 ```
 
 
@@ -84,6 +86,8 @@ Being a simple showcase some production hardening like fault tolerance is missin
 Some aspects will be implemented next (suggestions are welcome)
 
 - [x] finish connector
+- [x] make connector configurable
+- [ ] if topic for stream is not present do not shut down
 - [ ] more complex stream including a join with a KTable
 - [ ] some Ksqldb examples
 - [ ] Testing, Testing Testing
