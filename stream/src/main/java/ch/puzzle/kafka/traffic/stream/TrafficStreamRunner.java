@@ -8,14 +8,20 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes.StringSerde;
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.KafkaStreams.State;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TrafficStreamRunner {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TrafficStreamRunner.class);
 
     private final Properties properties;
 
@@ -36,26 +42,32 @@ public class TrafficStreamRunner {
     }
 
 
-
     public Serde<Vbv> getVbvSerde() {
         return vbvSerde;
     }
 
 
-    public void run(StreamsBuilder builder){
-        try (KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), properties)) {
-            final CountDownLatch shutdownLatch = new CountDownLatch(1);
+    public void run(StreamsBuilder builder) {
 
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                kafkaStreams.close(Duration.ofSeconds(2));
-                shutdownLatch.countDown();
-            }));
-            try {
-                kafkaStreams.start();
-                shutdownLatch.await();
-            } catch (Throwable e) {
-                System.exit(1);
+        final CountDownLatch shutdownLatch = new CountDownLatch(1);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(shutdownLatch::countDown));
+        try {
+            while (shutdownLatch.getCount() > 0) {
+                try (KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), properties)) {
+                    kafkaStreams.start();
+                    var state = kafkaStreams.state();
+                    while (!state.hasCompletedShutdown()
+                            && !shutdownLatch.await(10, TimeUnit.SECONDS)) {
+                        state = kafkaStreams.state();
+                    }
+                    kafkaStreams.close(Duration.ofSeconds(2));
+                }
             }
+        } catch (Throwable e) {
+            LOG.error("Error while starting streams", e);
+            System.exit(1);
         }
+
     }
 }

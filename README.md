@@ -28,10 +28,9 @@ The following commands lets you build the container images
  docker build  -t traffic-stream stream/.
 ```
 
-now you  launch the  zookepper, kafka, kafka connect
-and schema-registry with the following command
+now you  launch the  containers with the following command
 ```
-docker compose up -d  traffic-connector zookeeper kafka schema-registry
+docker compose up -d 
 ```
 given you have docker and docker compose installed on your machine
 
@@ -54,11 +53,6 @@ including `traffic` with
 kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic traffic
 ```
 and check if the connector is producing record
-
-now you  launch the  stream containers with the following command
-```
-docker compose up -d  traffic-dispatch traffic-count
-```
 
 again if you have the kafka binaries on your system you should be able to connect to all the topics 
 including `traffic-SWISS10_PW-minute-count` with
@@ -87,7 +81,7 @@ Some aspects will be implemented next (suggestions are welcome)
 
 - [x] finish connector
 - [x] make connector configurable
-- [ ] if topic for stream is not present do not shut down
+- [x] if topic for stream is not present do not shut down
 - [ ] more complex stream including a join with a KTable
 - [ ] some Ksqldb examples
 - [ ] Testing, Testing Testing
