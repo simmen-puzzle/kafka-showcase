@@ -69,6 +69,15 @@ services:
         condition: service_healthy
     command: 'java -cp /home/streams.jar ch.puzzle.kafka.traffic.stream.PwCountLastMinuteStream'
 
+  traffic-replaced:
+    image: traffic-stream:latest
+    network_mode: 'host'
+    container_name: traffic-replaced
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: 'java -cp /home/streams.jar ch.puzzle.kafka.traffic.stream.JoinStream'
+
 
   traffic-connector:
     image: traffic-connector:latest
@@ -92,7 +101,7 @@ services:
        CONNECT_VALUE_CONVERTER: 'io.confluent.connect.avro.AvroConverter'
        CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
        CONNECT_REST_ADVERTISED_HOST_NAME: 'traffic-connector'
-       CONNECT_PLUGIN_PATH: '/usr/share/java'
+       CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components'
        CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
        KAFKA_DEBUG: "false"
        JAVA_DEBUG_PORT: "*:8888"

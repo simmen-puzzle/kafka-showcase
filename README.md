@@ -46,6 +46,7 @@ now you can start the connector with the following statement
 ```
 curl -X POST -H "Content-Type:application/json" -d @connector-M3621.json http://localhost:8083/connectors
 curl -X POST -H "Content-Type:application/json" -d @connector-M1118.json http://localhost:8083/connectors
+curl -X POST -H "Content-Type:application/json" -d @connector-jdbc.json http://localhost:8083/connectors
 ```
 zf you have the kafka binaries on your system you should be able to connect to all the topics
 including `traffic` with
@@ -82,6 +83,6 @@ Some aspects will be implemented next (suggestions are welcome)
 - [x] finish connector
 - [x] make connector configurable
 - [x] if topic for stream is not present do not shut down
-- [ ] more complex stream including a join with a KTable
+- [x] more complex stream including a join with a KTable
 - [ ] some Ksqldb examples
 - [ ] Testing, Testing Testing

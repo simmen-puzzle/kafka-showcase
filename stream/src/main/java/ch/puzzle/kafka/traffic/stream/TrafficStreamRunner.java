@@ -35,10 +35,14 @@ public class TrafficStreamRunner {
         properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
         properties.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
 
-        final Map<String, String> serdeConfig = Collections.singletonMap("schema.registry.url",
-                "http://localhost:8081");
+        final Map<String, String> serdeConfig = getSerdeConfig();
         vbvSerde = new SpecificAvroSerde<>();
         vbvSerde.configure(serdeConfig, false);
+    }
+
+    public Map<String, String> getSerdeConfig() {
+        return Collections.singletonMap("schema.registry.url",
+                "http://localhost:8081");
     }
 
 

@@ -1,0 +1,13 @@
+{
+  "name": "swiss10-jdbc-1",
+  "config": {
+    "connector.class"                                                : "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "connection.url"                                                 : "jdbc:sqlite:swiss10.db",
+    "tasks.max"                                                      : "1",
+    "mode"                                                           : "incrementing",
+    "incrementing.column.name"                                       : "ID",
+    "topic.prefix"                                                   : "traffic.",
+    "table.whitelist"                                                : "swiss_10"
+
+  }
+}

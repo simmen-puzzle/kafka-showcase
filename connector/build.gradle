@@ -27,11 +27,4 @@ test {
 }
 
 
-/*shadowJar{
-    dependencies {
-        exclude(dependency(".*hk2.*:.*hk2.*:.*"))
-    }
-}*/
-
-
 
