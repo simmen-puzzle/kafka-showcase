@@ -1,5 +1,7 @@
 package ch.puzzle.kafka.traffic.stream;
 
+import static ch.puzzle.Topics.TRAFFIC;
+
 import avro.Vbv;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -19,7 +21,7 @@ public class DispatchStream {
 
         //dispatch to different topics based on swiss10Class
         StreamsBuilder builder = new StreamsBuilder();
-        final KStream<String, Vbv> vbvStream = builder.stream("traffic", Consumed.with(Serdes.String(), runner.getVbvSerde()));
+        final KStream<String, Vbv> vbvStream = builder.stream(TRAFFIC, Consumed.with(Serdes.String(), runner.getVbvSerde()));
         vbvStream.to((e, v, r) -> "traffic-" + v.getSwiss10Class(), Produced.with(Serdes.String(), runner.getVbvSerde()));
         runner.run(builder);
     }

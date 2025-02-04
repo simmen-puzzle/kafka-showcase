@@ -6,4 +6,5 @@ include 'untitled'
 include 'source'
 include 'standalone'
 include 'stream'
+include 'topics'
 

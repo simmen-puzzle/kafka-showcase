@@ -28,11 +28,16 @@ The following commands lets you build the container images
  docker build  -t traffic-stream stream/.
 ```
 
-now you  launch the  containers with the following command
+now you  launch the  non stream containers with the following command
 ```
-docker compose up -d 
+docker compose up -d  traffic-connector zookeeper kafka schema-registry
 ```
 given you have docker and docker compose installed on your machine
+
+now create the topics by running the following class
+```
+ch.puzzle.TopicCreator
+```
 
 Once the plugins in kafka connect are loaded you can call
 ```
@@ -48,12 +53,17 @@ curl -X POST -H "Content-Type:application/json" -d @connector-M3621.json http://
 curl -X POST -H "Content-Type:application/json" -d @connector-M1118.json http://localhost:8083/connectors
 curl -X POST -H "Content-Type:application/json" -d @connector-jdbc.json http://localhost:8083/connectors
 ```
-zf you have the kafka binaries on your system you should be able to connect to all the topics
+if you have the kafka binaries on your system you should be able to connect to all the topics
 including `traffic` with
 ```
 kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic traffic
 ```
 and check if the connector is producing record
+
+now you can start the remaining containers
+```
+docker compose up -d  
+```
 
 again if you have the kafka binaries on your system you should be able to connect to all the topics 
 including `traffic-SWISS10_PW-minute-count` with

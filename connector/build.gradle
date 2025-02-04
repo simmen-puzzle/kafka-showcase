@@ -18,6 +18,7 @@ dependencies {
     implementation "org.apache.kafka:connect-api:3.9.0"
     implementation project(":schema")
     implementation project(":source")
+    implementation project(":topics")
     testImplementation platform("org.junit:junit-bom:5.10.0")
     testImplementation "org.junit.jupiter:junit-jupiter"
 }

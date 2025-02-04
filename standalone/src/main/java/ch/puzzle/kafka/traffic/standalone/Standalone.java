@@ -1,6 +1,8 @@
 package ch.puzzle.kafka.traffic.standalone;
 
 
+import static ch.puzzle.Topics.TRAFFIC;
+
 import avro.Vbv;
 import ch.puzzle.kafka.traffic.source.TrafficSource;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
@@ -27,7 +29,7 @@ public class Standalone {
         thread.start();
         try(Producer<String, Vbv> producer = new KafkaProducer<>(properties)){
         while (thread.isAlive()) {
-            source.getVbvData().stream().map(vbv->new ProducerRecord<String, Vbv>("traffic","M3621", vbv)).forEach(producer::send);
+            source.getVbvData().stream().map(vbv->new ProducerRecord<String, Vbv>(TRAFFIC,"M3621", vbv)).forEach(producer::send);
             producer.flush();
             try {
                 Thread.sleep(1000);

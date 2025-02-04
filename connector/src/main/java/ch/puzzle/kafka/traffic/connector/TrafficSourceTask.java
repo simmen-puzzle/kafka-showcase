@@ -1,5 +1,6 @@
 package ch.puzzle.kafka.traffic.connector;
 
+import static ch.puzzle.Topics.TRAFFIC;
 import static ch.puzzle.kafka.traffic.connector.TrafficSourceConnector.COLLECTOR_ID;
 
 import avro.Vbv;
@@ -36,7 +37,7 @@ public class TrafficSourceTask extends SourceTask {
                 .map(v -> new SourceRecord(
                         Collections.singletonMap("source", collectorId)
                         , Collections.singletonMap("offset", 0)
-                        , "traffic"
+                        , TRAFFIC
                         , Schema.STRING_SCHEMA
                         , collectorId
                         , v.schema()
